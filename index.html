@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namibia Tourism Market Analysis 2023</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-change {
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .positive { color: #27ae60; }
+        .negative { color: #e74c3c; }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .chart-container.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .chart-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .control-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        
+        .control-btn.active {
+            background: #764ba2;
+        }
+        
+        .insights-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .insights-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .insight-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .insight-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .insight-card p {
+            line-height: 1.6;
+        }
+        
+        .economic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .economic-table th,
+        .economic-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .economic-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .economic-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🇳🇦 Namibia Tourism Market Analysis</h1>
+            <p>Strategic Insights from 2023 Data & COVID Recovery Trends</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">863,872</div>
+                <div class="stat-label">Total Visitors 2023</div>
+                <div class="stat-change positive">+87.4% from 2022</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">54%</div>
+                <div class="stat-label">Pre-COVID Recovery</div>
+                <div class="stat-change positive">vs 1.595M in 2019</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12-14.5%</div>
+                <div class="stat-label">GDP Contribution</div>
+                <div class="stat-change positive">Including indirect effects</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">$556</div>
+                <div class="stat-label">Avg. Spending per Tourist</div>
+                <div class="stat-change positive">Strong per-capita impact</div>
+            </div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">COVID Recovery Trajectory</div>
+                <canvas id="recoveryChart" width="400" height="300"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Purpose of Visit Breakdown</div>
+                <canvas id="purposeChart" width="400" height="300"></canvas>
+            </div>
+            
+            <div class="chart-container full-width">
+                <div class="chart-title">Top Source Markets 2023</div>
+                <div class="controls">
+                    <button class="control-btn active" onclick="toggleMarketView('total')">Total Arrivals</button>
+                    <button class="control-btn" onclick="toggleMarketView('leisure')">Holiday Visitors Only</button>
+                    <button class="control-btn" onclick="toggleMarketView('recovery')">Recovery vs 2019</button>
+                </div>
+                <canvas id="sourceMarketsChart" width="800" height="400"></canvas>
+            </div>
+        </div>
+        
+        <div class="insights-section">
+            <h2 class="insights-title">🎯 Strategic Market Insights</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <h3>European Market Strength</h3>
+                    <p>Germany leads European arrivals with 79,989 visitors (9.3% of total). European markets show exceptional recovery with 158,000 holiday visitors, representing 37.2% of leisure tourists despite being only 21.5% of total arrivals.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h3>Angola-Zambia Decline</h3>
+                    <p>Combined Angola-Zambia market collapsed from 800,000+ in 2019 to ~170,000 in 2023 - a loss of 630,000 visitors. Excluding this decline shows 88% recovery rates, indicating strong underlying demand.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h3>Solo Female Travel Boom</h3>
+                    <p>Solo female travelers aged ~52 represent fastest-growing demographic with 15% increases post-pandemic. 81% of solo bookings made by women, seeking authentic cultural and wildlife experiences.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h3>Self-Drive Tourism Growth</h3>
+                    <p>Europeans increasingly favor independent travel arrangements over organized tours. Self-drive camping especially popular among German-speaking visitors seeking flexibility and bush camping experiences.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h3>Leisure vs Total Arrivals</h3>
+                    <p>Only 424,000 of 863,872 total arrivals were holiday/leisure tourists (49.1%). Remaining 51% includes VFR (31.3%), business (15.8%), and transit (3.6%) - significant non-leisure component.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h3>Premium Positioning Success</h3>
+                    <p>Namibia's 12-14.5% tourism GDP contribution exceeds South Africa's 8.8%, demonstrating successful high-value, low-volume tourism strategy. Average spending of $556 per tourist supports premium positioning.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="insights-section">
+            <h2 class="insights-title">💰 Economic Impact Analysis</h2>
+            <table class="economic-table">
+                <thead>
+                    <tr>
+                        <th>Economic Indicator</th>
+                        <th>2023 Value</th>
+                        <th>2022 Comparison</th>
+                        <th>Pre-COVID (2019)</th>
+                        <th>Strategic Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total Tourist Arrivals</td>
+                        <td>863,872</td>
+                        <td>+87.4% (461,027)</td>
+                        <td>1,595,000 (54% recovery)</td>
+                        <td>Strong recovery trajectory continues</td>
+                    </tr>
+                    <tr>
+                        <td>Tourism GDP Contribution</td>
+                        <td>12-14.5%</td>
+                        <td>Improving from 2022</td>
+                        <td>Similar pre-COVID</td>
+                        <td>Higher than SA (8.8%) - premium positioning</td>
+                    </tr>
+                    <tr>
+                        <td>Average Tourist Spending</td>
+                        <td>$556 USD</td>
+                        <td>Maintained levels</td>
+                        <td>Comparable baseline</td>
+                        <td>Strong per-capita contribution</td>
+                    </tr>
+                    <tr>
+                        <td>Tourism Employment</td>
+                        <td>57,571 direct jobs</td>
+                        <td>Recovery ongoing</td>
+                        <td>Pre-COVID baseline</td>
+                        <td>7.9% of total national employment</td>
+                    </tr>
+                    <tr>
+                        <td>Foreign Exchange Earnings</td>
+                        <td>Est. $480M (projected)</td>
+                        <td>$277M (+73%)</td>
+                        <td>$451M (106% recovery)</td>
+                        <td>Approaching pre-pandemic levels</td>
+                    </tr>
+                    <tr>
+                        <td>Hotel Occupancy Rate</td>
+                        <td>54.48% average</td>
+                        <td>Significant improvement</td>
+                        <td>Exceeded 2019 by 1%</td>
+                        <td>Efficient capacity utilization</td>
+                    </tr>
+                    <tr>
+                        <td>Average Length of Stay</td>
+                        <td>14 nights</td>
+                        <td>Stable</td>
+                        <td>Trending shorter visits</td>
+                        <td>Quality over quantity approach</td>
+                    </tr>
+                    <tr>
+                        <td>Community Conservancy Impact</td>
+                        <td>18% of territory</td>
+                        <td>Expanding coverage</td>
+                        <td>Foundation established</td>
+                        <td>1 job per 12 tourists, 27% tourism employment</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Data for charts
+        const recoveryData = {
+            labels: ['2019', '2020', '2021', '2022', '2023'],
+            datasets: [{
+                label: 'Tourist Arrivals',
+                data: [1595000, 169565, 232756, 461027, 863872],
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        };
+
+        const purposeData = {
+            labels: ['Leisure/Holiday', 'Visiting Friends/Relatives', 'Business', 'Transit'],
+            datasets: [{
+                data: [49.1, 31.3, 15.8, 3.6],
+                backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        };
+
+        const sourceMarketsData = {
+            total: {
+                labels: ['South Africa', 'Angola', 'Germany', 'Zambia', 'USA', 'UK', 'Netherlands', 'Botswana', 'France', 'Other'],
+                data: [349729, 112336, 79989, 58000, 22544, 14758, 12420, 11000, 14222, 189874]
+            },
+            leisure: {
+                labels: ['Germany', 'South Africa', 'USA', 'UK', 'Netherlands', 'France', 'Italy', 'Belgium', 'Australia', 'Other'],
+                data: [79989, 89000, 22544, 14758, 12420, 14222, 8500, 6200, 5800, 170567]
+            },
+            recovery: {
+                labels: ['Germany', 'South Africa', 'USA', 'UK', 'Netherlands', 'France', 'Angola', 'Zambia', 'Other EU', 'Other'],
+                data: [95, 78, 89, 87, 92, 85, 25, 18, 88, 70]
+            }
+        };
+
+        let currentMarketView = 'total';
+
+        // Initialize charts
+        const recoveryCtx = document.getElementById('recoveryChart').getContext('2d');
+        const purposeCtx = document.getElementById('purposeChart').getContext('2d');
+        const sourceMarketsCtx = document.getElementById('sourceMarketsChart').getContext('2d');
+
+        const recoveryChart = new Chart(recoveryCtx, {
+            type: 'line',
+            data: recoveryData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Arrivals: ${context.parsed.y.toLocaleString()}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return (value / 1000000).toFixed(1) + 'M';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const purposeChart = new Chart(purposeCtx, {
+            type: 'doughnut',
+            data: purposeData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.parsed}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        let sourceMarketsChart = new Chart(sourceMarketsCtx, {
+            type: 'bar',
+            data: {
+                labels: sourceMarketsData.total.labels,
+                datasets: [{
+                    data: sourceMarketsData.total.data,
+                    backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#67b7dc', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', '#d084d0'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                if (currentMarketView === 'recovery') {
+                                    return `${context.label}: ${context.parsed.y}% of 2019 levels`;
+                                }
+                                return `${context.label}: ${context.parsed.y.toLocaleString()} visitors`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                if (currentMarketView === 'recovery') {
+                                    return value + '%';
+                                }
+                                return (value / 1000).toFixed(0) + 'K';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        function toggleMarketView(view) {
+            currentMarketView = view;
+            
+            // Update button states
+            document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update chart data
+            const newData = sourceMarketsData[view];
+            sourceMarketsChart.data.labels = newData.labels;
+            sourceMarketsChart.data.datasets[0].data = newData.data;
+            
+            // Update chart title and labels
+            const titleMap = {
+                total: 'Top Source Markets 2023 - Total Arrivals',
+                leisure: 'Top Source Markets 2023 - Holiday Visitors Only', 
+                recovery: 'Market Recovery Rates (% of 2019 Levels)'
+            };
+            
+            document.querySelector('.chart-container.full-width .chart-title').textContent = titleMap[view];
+            sourceMarketsChart.update();
+        }
+
+        // Add hover effects to stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add click effects to insight cards
+        document.querySelectorAll('.insight-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
